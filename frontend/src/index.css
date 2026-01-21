@@ -1,0 +1,439 @@
+:root {
+  --bg-color: #0f172a;
+  --text-color: #e2e8f0;
+  --accent-color: #38bdf8;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(148, 163, 184, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.header {
+  padding: 1.5rem 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: var(--accent-color);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-color);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.main-content {
+  flex: 1;
+  position: relative;
+  display: flex;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.info-panel {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  z-index: 500;
+  transition: all 0.3s ease;
+}
+
+.info-panel:hover {
+  transform: translateX(-50%) translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-color);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.info-label {
+  color: #94a3b8;
+}
+
+.info-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+}
+
+/* Leaflet Overrides for Dark Mode */
+.leaflet-container {
+  background: var(--bg-color) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Custom Popup Style */
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(8px);
+  color: #fff !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid var(--glass-border);
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.9) !important;
+  /* Fix: sometimes the tip box-shadow or border creates artifacts */
+  box-shadow: none !important;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .info-panel {
+    top: 2rem;
+    left: 2rem;
+    bottom: auto;
+    transform: none;
+    width: 320px;
+  }
+
+  .info-panel:hover {
+    transform: translateY(5px);
+  }
+}
+
+/* Onboarding Styles */
+.onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
+  /* Ensure background zoom doesn't scroll */
+}
+
+/* Background Animation Layer */
+.onboarding-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.8)),
+    url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=2071&auto=format&fit=crop');
+  /* Bus/Traffic specific image */
+  background-size: cover;
+  background-position: center;
+  animation: bgZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes bgZoom {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.onboarding-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 2rem;
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes cardEntrance {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered Animations */
+.animate-delay-1 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-2 {
+  animation-delay: 0.4s;
+}
+
+.animate-delay-3 {
+  animation-delay: 0.6s;
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.brand-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.brand-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.brand-header p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+
+.input-group {
+  margin-bottom: 0.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.input-wrapper {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.input-wrapper .icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.input-wrapper input {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #fff;
+  width: 100%;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: #64748b;
+}
+
+.connector {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding-left: 2rem;
+}
+
+.connector .line {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--glass-border) 20%, var(--glass-border) 80%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.connector .line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, var(--accent-color), transparent);
+  animation: flowLine 2s linear infinite;
+}
+
+@keyframes flowLine {
+  0% {
+    top: -100%;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
+
+.search-btn {
+  margin-top: 2rem;
+  width: 100%;
+  background: var(--accent-color);
+  color: #0f172a;
+  border: none;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  background: #7dd3fc;
+  transform: translateY(-1px);
+}
+
+.search-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0f172a;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
