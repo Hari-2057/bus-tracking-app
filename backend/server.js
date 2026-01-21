@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+const path = require('path');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const { initDb, openDb } = require('./database');
@@ -174,6 +175,16 @@ setInterval(async () => {
         }
     }
 }, 1000);
+
+// --- SERVE FRONTEND (Production) ---
+const distPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(distPath));
+
+app.get('*', (req, res) => {
+    // If the request is for an API endpoint, don't serve index.html (though express.static handles this usually, the order matters)
+    // Actually, since this is the last route, it acts as a catch-all for SPA client-side routing.
+    res.sendFile(path.join(distPath, 'index.html'));
+});
 
 server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
