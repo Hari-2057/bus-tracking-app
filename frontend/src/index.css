@@ -30,8 +30,10 @@ h3 {
   letter-spacing: -0.025em;
 }
 
+/* Header adjustments */
 .header {
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
+  /* Reduced padding */
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--glass-border);
@@ -42,6 +44,16 @@ h3 {
   top: 0;
   z-index: 1000;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.25rem;
+  }
 }
 
 .header h1 {
@@ -103,19 +115,50 @@ h3 {
 
 .info-panel {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 95%;
+  /* Wider on mobile */
   max-width: 400px;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: 1.5rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
+  /* Slightly less padding */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
   z-index: 500;
   transition: all 0.3s ease;
+  max-height: 45vh;
+  /* Limit height on small screens */
+  overflow-y: auto;
+  /* Scroll if needed */
+}
+
+/* Scrollbar styling for info panel */
+.info-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.info-panel::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .info-panel {
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 1.5rem 1.5rem 0 0;
+    /* rounded top only */
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    padding-bottom: 2rem;
+    /* Safe area for bottom swipe bars */
+  }
 }
 
 .info-panel:hover {
@@ -234,7 +277,8 @@ h3 {
 }
 
 .onboarding-card {
-  width: 100%;
+  width: 90%;
+  /* Responsive width */
   max-width: 420px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
