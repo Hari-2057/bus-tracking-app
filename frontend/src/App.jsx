@@ -4,7 +4,7 @@ import BusMap from './components/BusMap';
 import Onboarding from './components/Onboarding';
 import './index.css';
 
-const SOCKET_URL = 'http://localhost:3000';
+const SOCKET_URL = import.meta.env.PROD ? '/' : 'http://localhost:3000';
 
 function App() {
   const [socket, setSocket] = useState(null);
