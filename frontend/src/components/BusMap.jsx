@@ -23,6 +23,11 @@ const getBusIcon = (type, busId) => {
     const busImage = isAC ? '/bus-ac.png' : '/bus-non-ac.png';
     const borderColor = isAC ? '#0ea5e9' : '#16a34a';
 
+    // Simplified marker for debugging
+    return L.marker([0, 0]).options.icon; // Use default
+
+    // Original custom marker commented out for debugging
+    /*
     return L.divIcon({
         className: 'custom-bus-marker',
         html: `<div style="
@@ -58,6 +63,7 @@ const getBusIcon = (type, busId) => {
         iconAnchor: [30, 30],
         popupAnchor: [0, -30]
     });
+    */
 };
 
 import routeData from '../data/routeData.json';
