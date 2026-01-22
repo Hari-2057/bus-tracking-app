@@ -133,8 +133,8 @@ function spawnBusesOnRoute(routeCode, routeName, path, origin, dest, count) {
         const busPrefix = isAC ? 'TN-01-AN' : 'TN-01-N'; // AN for Air-conditioned
         const visibleRouteName = `TNSTC ${routeName}`;
 
-        // Random speed between 2 and 6 points per tick
-        const speed = 2 + Math.floor(Math.random() * 4);
+        // Reduced speed for smoother movement (1-2 points per tick)
+        const speed = 1 + Math.floor(Math.random() * 2);
 
         buses.push(new Bus(
             `${busPrefix}-${1000 + i}`,
