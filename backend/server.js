@@ -134,7 +134,8 @@ function spawnBusesOnRoute(routeCode, routeName, path, origin, dest, count) {
         const visibleRouteName = `TNSTC ${routeName}`;
 
         // Reduced speed for smoother movement (1-2 points per tick)
-        const speed = 1 + Math.floor(Math.random() * 2);
+        // Minimal speed for ultra-smooth updates
+        const speed = 1;
 
         buses.push(new Bus(
             `${busPrefix}-${1000 + i}`,
