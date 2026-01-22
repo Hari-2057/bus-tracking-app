@@ -83,33 +83,63 @@ class Bus {
         this.reverse = reverse;
 
         // Start random position
-        this.currentPointIndex = Math.floor(Math.random() * (this.totalPoints - 1));
+        this.currentPointIndex = Math.floor(Math.random() * (this.totalPoints - 2));
+        this.progress = Math.random(); // Start at random sub-point progress
     }
 
     move() {
         if (!this.path || this.path.length < 2) return null;
 
-        // Update Index
-        if (this.reverse) {
-            this.currentPointIndex -= this.speedPoints;
-            if (this.currentPointIndex <= 0) {
-                this.currentPointIndex = 0;
-                this.reverse = false; // Turn around
-            }
-        } else {
-            this.currentPointIndex += this.speedPoints;
-            if (this.currentPointIndex >= this.totalPoints - 1) {
-                this.currentPointIndex = this.totalPoints - 1;
-                this.reverse = true; // Turn around
+        // Update Progress
+        this.progress += this.speedPoints;
+
+        // If progress exceeds 1, move to next index
+        if (this.progress >= 1.0) {
+            const steps = Math.floor(this.progress);
+            this.progress -= steps;
+
+            if (this.reverse) {
+                this.currentPointIndex -= steps;
+                if (this.currentPointIndex < 0) {
+                    this.currentPointIndex = 0;
+                    this.reverse = false; // Turn around
+                    this.progress = 0;
+                }
+            } else {
+                this.currentPointIndex += steps;
+                if (this.currentPointIndex >= this.totalPoints - 1) {
+                    this.currentPointIndex = this.totalPoints - 2; // Stay at second to last
+                    this.reverse = true; // Turn around
+                    this.progress = 0;
+                }
             }
         }
 
-        const currentPos = this.path[Math.floor(this.currentPointIndex)];
+        // Interpolate Position (LERP)
+        const currentIndex = Math.floor(this.currentPointIndex);
+        let nextIndex = this.reverse ? currentIndex - 1 : currentIndex + 1;
+
+        // Safety clamp
+        if (currentIndex < 0) return null;
+        if (nextIndex < 0 || nextIndex >= this.totalPoints) {
+            nextIndex = currentIndex; // Fallback
+        }
+
+        const currentPos = this.path[currentIndex];
+        const nextPos = this.path[nextIndex];
+
+        // Calculate interpolated point
+        // If reverse, we are moving FROM current TO next (which is index - 1), 
+        // but getPointAt logic assumes t goes 0->1.
+        // Actually, logic is simpler: we are always at 'currentPointIndex' + 'progress' towards 'next'.
+        // My logic above handles index updates correctly.
+
+        const interpolatedPos = getPointAt(currentPos, nextPos, this.progress);
 
         return {
             busId: this.id,
-            lat: currentPos.lat,
-            lng: currentPos.lng,
+            lat: interpolatedPos.lat,
+            lng: interpolatedPos.lng,
             route: this.routeName,
             type: this.type,
             origin: this.reverse ? this.destName : this.originName,
@@ -134,8 +164,8 @@ function spawnBusesOnRoute(routeCode, routeName, path, origin, dest, count) {
         const visibleRouteName = `TNSTC ${routeName}`;
 
         // Reduced speed for smoother movement (1-2 points per tick)
-        // Minimal speed for ultra-smooth updates
-        const speed = 1;
+        // Speed factor: 0.3 means it takes ~3.3 seconds to cross one gap (approx 20-25 m/s or 70-90 km/h)
+        const speed = 0.3;
 
         buses.push(new Bus(
             `${busPrefix}-${1000 + i}`,
