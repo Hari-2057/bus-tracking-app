@@ -74,9 +74,12 @@ const routePointsTC_KAL = routeData.tc_alt;
 function Recenter({ lat, lng, busId }) {
     const map = useMap();
     useEffect(() => {
+        // Fix: Force map to recalculate size to prevent grey tiles
+        map.invalidateSize();
+
         // Only pan when the Bus ID changes (initial selection), not on every location update
         map.panTo([lat, lng], { animate: true, duration: 1 });
-    }, [busId]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [busId, map]); // Added map dependency
     return null;
 }
 
